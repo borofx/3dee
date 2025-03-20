@@ -123,22 +123,17 @@
             justify-content: center;
             align-items: center;
             position: relative;
+            height: 400px;
         }
 
-        .model-placeholder {
-            width: 300px;
-            height: 400px;
+        #model-container {
+            width: 100%;
+            height: 100%;
             background: linear-gradient(45deg, rgba(110, 68, 255, 0.2), rgba(110, 68, 255, 0.1));
             border-radius: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--accent);
-            font-size: 0.9rem;
-            text-align: center;
-            padding: 1rem;
             box-shadow: 0 0 30px rgba(110, 68, 255, 0.3);
             backdrop-filter: blur(5px);
+            overflow: hidden;
         }
 
         .hero h1 {
@@ -383,7 +378,7 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .hero-content, .model-placeholder, .product-card {
+        .hero-content, #model-container, .product-card {
             animation: fadeIn 1s ease forwards;
         }
 
@@ -458,11 +453,7 @@
             </div>
         </div>
         <div class="hero-model">
-            <div class="model-placeholder">
-                [3D Model of Quantum Perfume will be displayed here]
-                <br><br>
-                This is where your 3D model will be integrated
-            </div>
+            <div id="model-container"></div>
         </div>
     </section>
 
@@ -564,6 +555,11 @@
         </div>
     </footer>
 
+    <!-- Include Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
     <script>
         // Basic cart functionality
         let cartCount = 0;
@@ -602,97 +598,197 @@
 
         // Interactive Background with Abstract Shapes
         const canvas = document.getElementById('background-canvas');
-const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d');
 
-canvas.width = window.innerWidth;
-canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
 
-window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-    initBlobs();
-});
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            initBlobs();
+        });
 
-const blobs = [];
-const numBlobs = 10;
+        const blobs = [];
+        const numBlobs = 10;
 
-class Blob {
-    constructor(x, y, radius, color) {
-        this.x = x;
-        this.y = y;
-        this.radius = radius;
-        this.color = color;
-        this.angle = Math.random() * Math.PI * 2;
-        this.noiseOffset = Math.random() * 1000;
-    }
+        class Blob {
+            constructor(x, y, radius, color) {
+                this.x = x;
+                this.y = y;
+                this.radius = radius;
+                this.color = color;
+                this.angle = Math.random() * Math.PI * 2;
+                this.noiseOffset = Math.random() * 1000;
+            }
 
-    update() {
-        this.angle += 0.005;
-        this.x += Math.cos(this.angle) * 0.5;
-        this.y += Math.sin(this.angle) * 0.5;
-    }
+            update() {
+                this.angle += 0.005;
+                this.x += Math.cos(this.angle) * 0.5;
+                this.y += Math.sin(this.angle) * 0.5;
+            }
 
-    draw() {
-        ctx.beginPath();
-        const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.5, this.x, this.y, this.radius);
-        gradient.addColorStop(0, this.color);
-        gradient.addColorStop(1, 'rgba(0,0,0,0)');
-        ctx.fillStyle = gradient;
-        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-        ctx.fill();
-    }
-}
-
-function initBlobs() {
-    blobs.length = 0;
-    for (let i = 0; i < numBlobs; i++) {
-        const x = Math.random() * canvas.width;
-        const y = Math.random() * canvas.height;
-        const radius = Math.random() * 100 + 50;
-        const color = `hsla(${Math.random() * 360}, 100%, 70%, 0.8)`;
-        blobs.push(new Blob(x, y, radius, color));
-    }
-}
-
-function animate() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = 'rgba(10, 10, 20, 0.2)';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    blobs.forEach(blob => {
-        blob.update();
-        blob.draw();
-    });
-    
-    requestAnimationFrame(animate);
-}
-
-initBlobs();
-animate();
-        // Draw lines between nearby shapes
-        function drawConnections() {
-            for (let i = 0; i < shapes.length; i++) {
-                for (let j = i + 1; j < shapes.length; j++) {
-                    const dx = shapes[i].x - shapes[j].x;
-                    const dy = shapes[i].y - shapes[j].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 150) {
-                        ctx.beginPath();
-                        ctx.moveTo(shapes[i].x, shapes[i].y);
-                        ctx.lineTo(shapes[j].x, shapes[j].y);
-                        
-                        const opacity = 1 - distance / 150;
-                        ctx.strokeStyle = `rgba(110, 68, 255, ${opacity * 0.2})`;
-                        ctx.lineWidth = 1;
-                        ctx.stroke();
-                    }
-                }
+            draw() {
+                ctx.beginPath();
+                const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.5, this.x, this.y, this.radius);
+                gradient.addColorStop(0, this.color);
+                gradient.addColorStop(1, 'rgba(0,0,0,0)');
+                ctx.fillStyle = gradient;
+                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                ctx.fill();
             }
         }
-        
-        // Start the animation
+
+        function initBlobs() {
+            blobs.length = 0;
+            for (let i = 0; i < numBlobs; i++) {
+                const x = Math.random() * canvas.width;
+                const y = Math.random() * canvas.height;
+                const radius = Math.random() * 100 + 50;
+                const color = `hsla(${Math.random() * 360}, 100%, 70%, 0.8)`;
+                blobs.push(new Blob(x, y, radius, color));
+            }
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = 'rgba(10, 10, 20, 0.2)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            blobs.forEach(blob => {
+                blob.update();
+                blob.draw();
+            });
+            
+            requestAnimationFrame(animate);
+        }
+
+        initBlobs();
         animate();
+
+        // 3D Model Setup
+        const container = document.getElementById('model-container');
+        const scene = new THREE.Scene();
+        scene.background = null; // Transparent background
+
+        // Camera setup with proper aspect ratio based on container dimensions
+        const containerWidth = container.clientWidth;
+        const containerHeight = container.clientHeight;
+        const camera = new THREE.PerspectiveCamera(75, containerWidth / containerHeight, 0.1, 1000);
+        camera.position.z = 5;
+
+        // Renderer setup
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setSize(containerWidth, containerHeight);
+        renderer.setClearColor(0x000000, 0); // Transparent background
+        container.appendChild(renderer.domElement);
+
+        // Add lights
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.8);
+        scene.add(ambientLight);
+
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
+        directionalLight.position.set(1, 1, 1);
+        scene.add(directionalLight);
+
+        // Add OrbitControls for mouse interaction
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.25;
+        controls.screenSpacePanning = false;
+        controls.maxPolarAngle = Math.PI;
+        controls.minDistance = 2;
+        controls.maxDistance = 10;
+
+        // Load 3D model
+        const loader = new THREE.GLTFLoader();
+        
+        // Create a temporary cube while model loads
+        const geometry = new THREE.BoxGeometry(1, 1, 1);
+        const material = new THREE.MeshStandardMaterial({ color: 0x6e44ff });
+        const cube = new THREE.Mesh(geometry, material);
+        scene.add(cube);
+        
+        // Attempt to load the model
+        loader.load('Bottle.glb', 
+    function (gltf) {
+        scene.remove(cube); // Remove temporary cube
+        const model = gltf.scene;
+        
+        // Center the model
+        const box = new THREE.Box3().setFromObject(model);
+        const center = box.getCenter(new THREE.Vector3());
+        model.position.x = -center.x;
+        model.position.y = -center.y;
+        model.position.z = -center.z;
+        
+        // Adjust scale to fit container
+        const scale = 1.2;
+        model.scale.set(scale, scale, scale);
+        
+        // Adjust lightness of the model's materials
+        model.traverse((node) => {
+            if (node.isMesh && node.material) {
+                // For a single material
+                if (!Array.isArray(node.material)) {
+                    // Make the material brighter (increase values for brighter, decrease for darker)
+                    if (node.material.color) {
+                        // Option 1: Adjust color directly
+                        node.material.color.multiplyScalar(1); // Value > 1 brightens, < 1 darkens
+                        
+                        // Option 2: Change emissive property to add glow
+                        node.material.emissive = new THREE.Color(0x333333);
+                        
+                        // Option 3: Adjust material properties
+                        node.material.roughness = 0.3; // Lower for more shiny
+                        node.material.metalness = 0.7; // Higher for more metallic
+                    }
+                } 
+                // For multiple materials
+                else if (Array.isArray(node.material)) {
+                    node.material.forEach(mat => {
+                        if (mat.color) {
+                            mat.color.multiplyScalar(1.5);
+                            mat.roughness = 0.5;
+                            mat.metalness = 0.2;
+                        }
+                    });
+                }
+            }
+        });
+        
+        scene.add(model);
+    },
+    function (xhr) {
+        console.log((xhr.loaded / xhr.total * 100) + '% loaded');
+    },
+    function (error) {
+        console.error('An error happened', error);
+        // Keep cube visible if model fails to load
+    }
+);
+
+        // Handle window resize
+        window.addEventListener('resize', function () {
+            const containerWidth = container.clientWidth;
+            const containerHeight = container.clientHeight;
+            camera.aspect = containerWidth / containerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(containerWidth, containerHeight);
+        });
+
+        // Animation loop
+        function animate3D() {
+            requestAnimationFrame(animate3D);
+            if (cube) {
+                cube.rotation.x += 0.01;
+                cube.rotation.y += 0.01;
+            }
+            controls.update(); // Required for damping
+            renderer.render(scene, camera);
+        }
+        
+        animate3D();
     </script>
 </body>
 </html>
