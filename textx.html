@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AETHER | Premium Perfumes</title>
+    <style>
+        :root {
+            --primary: #121212;
+            --secondary: #f8f8f8;
+            --accent: #6e44ff;
+            --accent-light: #8e6aff;
+            --text: #e0e0e0;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        /* Interactive Background */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background-color: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--secondary);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .cart-btn {
+            background: transparent;
+            color: var(--text);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 0 5%;
+            margin-top: 2rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-content {
+            flex: 1;
+            z-index: 2;
+        }
+
+        .hero-model {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        .model-placeholder {
+            width: 300px;
+            height: 400px;
+            background: linear-gradient(45deg, rgba(110, 68, 255, 0.2), rgba(110, 68, 255, 0.1));
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--accent);
+            font-size: 0.9rem;
+            text-align: center;
+            padding: 1rem;
+            box-shadow: 0 0 30px rgba(110, 68, 255, 0.3);
+            backdrop-filter: blur(5px);
+        }
+
+        .hero h1 {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            line-height: 1.1;
+        }
+
+        .hero p {
+            font-size: 1.1rem;
+            max-width: 500px;
+            margin-bottom: 2rem;
+            opacity: 0.8;
+        }
+
+        .highlight {
+            color: var(--accent);
+        }
+
+        .cta-btn {
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: var(--transition);
+            margin-right: 1rem;
+        }
+
+        .cta-btn:hover {
+            background: var(--accent-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(110, 68, 255, 0.3);
+        }
+
+        .secondary-btn {
+            background: transparent;
+            color: var(--text);
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            border: 1px solid var(--text);
+            transition: var(--transition);
+        }
+
+        .secondary-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Products Section */
+        .products {
+            padding: 5rem 5%;
+            position: relative;
+            z-index: 1;
+            background-color: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: var(--accent);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(110, 68, 255, 0.2);
+        }
+
+        .product-img {
+            height: 250px;
+            background: linear-gradient(45deg, rgba(110, 68, 255, 0.05), rgba(110, 68, 255, 0.1));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .product-info {
+            padding: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart {
+            width: 100%;
+            background: transparent;
+            color: var(--text);
+            padding: 0.8rem;
+            border: 1px solid var(--text);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3rem 5%;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-desc {
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            opacity: 1;
+        }
+
+        .footer-newsletter input {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .footer-newsletter button {
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .footer-newsletter button:hover {
+            background: var(--accent-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .hero-content, .model-placeholder, .product-card {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .product-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .product-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        .product-card:nth-child(4) {
+            animation-delay: 0.6s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .hero {
+                flex-direction: column;
+                text-align: center;
+                padding-top: 100px;
+            }
+
+            .hero-content {
+                order: 2;
+            }
+
+            .hero-model {
+                order: 1;
+                margin-bottom: 2rem;
+            }
+
+            .hero h1 {
+                font-size: 3rem;
+            }
+
+            .hero p {
+                margin: 0 auto 2rem;
+            }
+
+            .nav-links {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Interactive Background Canvas -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">AETHER<span>.</span></div>
+        <div class="nav-links">
+            <a href="#">Home</a>
+            <a href="#">Collections</a>
+            <a href="#">Best Sellers</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+        <button class="cart-btn">Cart (0)</button>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Your <span class="highlight">Signature</span> Scent</h1>
+            <p>Experience our new flagship fragrance "Quantum" - a revolutionary blend of molecular precision and artistic expression.</p>
+            <div class="cta-buttons">
+                <button class="cta-btn">Shop Now</button>
+                <button class="secondary-btn">Explore Collection</button>
+            </div>
+        </div>
+        <div class="hero-model">
+            <div class="model-placeholder">
+                [3D Model of Quantum Perfume will be displayed here]
+                <br><br>
+                This is where your 3D model will be integrated
+            </div>
+        </div>
+    </section>
+
+    <!-- Products Section -->
+    <section class="products">
+        <h2 class="section-title">Recommended Products</h2>
+        <div class="products-grid">
+            <!-- Product 1 -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="/api/placeholder/200/250" alt="Quantum Perfume" />
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Quantum</h3>
+                    <p class="product-desc">Our flagship fragrance with notes of amber, bergamot and cedar wood.</p>
+                    <div class="product-price">$120.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Product 2 -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="/api/placeholder/200/250" alt="Nebula Perfume" />
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Nebula</h3>
+                    <p class="product-desc">An ethereal blend of vanilla, jasmine and mystic musk.</p>
+                    <div class="product-price">$95.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Product 3 -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="/api/placeholder/200/250" alt="Eclipse Perfume" />
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Eclipse</h3>
+                    <p class="product-desc">Dark and mysterious with notes of black orchid and sandalwood.</p>
+                    <div class="product-price">$110.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+
+            <!-- Product 4 -->
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="/api/placeholder/200/250" alt="Aurora Perfume" />
+                </div>
+                <div class="product-info">
+                    <h3 class="product-name">Aurora</h3>
+                    <p class="product-desc">A fresh and vibrant fragrance with citrus and light floral notes.</p>
+                    <div class="product-price">$85.00</div>
+                    <button class="add-to-cart">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="footer-content">
+            <div class="footer-info">
+                <div class="footer-logo">AETHER<span>.</span></div>
+                <p class="footer-desc">Premium fragrances crafted with molecular precision and artistic expression.</p>
+            </div>
+
+            <div class="footer-links">
+                <h4>Shop</h4>
+                <ul>
+                    <li><a href="#">All Products</a></li>
+                    <li><a href="#">New Arrivals</a></li>
+                    <li><a href="#">Best Sellers</a></li>
+                    <li><a href="#">Special Offers</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-links">
+                <h4>About</h4>
+                <ul>
+                    <li><a href="#">Our Story</a></li>
+                    <li><a href="#">Sustainability</a></li>
+                    <li><a href="#">Ingredients</a></li>
+                    <li><a href="#">Blog</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-newsletter">
+                <h4>Subscribe to our Newsletter</h4>
+                <input type="email" placeholder="Your email address">
+                <button>Subscribe</button>
+            </div>
+        </div>
+
+        <div class="copyright">
+            © 2025 AETHER. All rights reserved.
+        </div>
+    </footer>
+
+    <script>
+        // Basic cart functionality
+        let cartCount = 0;
+        const cartBtn = document.querySelector('.cart-btn');
+        const addToCartBtns = document.querySelectorAll('.add-to-cart');
+
+        addToCartBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                cartCount++;
+                cartBtn.textContent = `Cart (${cartCount})`;
+                
+                // Animation for button
+                btn.textContent = "Added!";
+                btn.style.background = "var(--accent)";
+                btn.style.color = "white";
+                btn.style.borderColor = "var(--accent)";
+                
+                setTimeout(() => {
+                    btn.textContent = "Add to Cart";
+                    btn.style.background = "transparent";
+                    btn.style.color = "var(--text)";
+                    btn.style.borderColor = "var(--text)";
+                }, 1000);
+            });
+        });
+
+        // Scroll animation
+        window.addEventListener('scroll', () => {
+            const nav = document.querySelector('nav');
+            if (window.scrollY > 50) {
+                nav.style.padding = "1rem 5%";
+            } else {
+                nav.style.padding = "1.5rem 5%";
+            }
+        });
+
+        // Interactive Background with Abstract Shapes
+        const canvas = document.getElementById('background-canvas');
+const ctx = canvas.getContext('2d');
+
+canvas.width = window.innerWidth;
+canvas.height = window.innerHeight;
+
+window.addEventListener('resize', () => {
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    initBlobs();
+});
+
+const blobs = [];
+const numBlobs = 10;
+
+class Blob {
+    constructor(x, y, radius, color) {
+        this.x = x;
+        this.y = y;
+        this.radius = radius;
+        this.color = color;
+        this.angle = Math.random() * Math.PI * 2;
+        this.noiseOffset = Math.random() * 1000;
+    }
+
+    update() {
+        this.angle += 0.005;
+        this.x += Math.cos(this.angle) * 0.5;
+        this.y += Math.sin(this.angle) * 0.5;
+    }
+
+    draw() {
+        ctx.beginPath();
+        const gradient = ctx.createRadialGradient(this.x, this.y, this.radius * 0.5, this.x, this.y, this.radius);
+        gradient.addColorStop(0, this.color);
+        gradient.addColorStop(1, 'rgba(0,0,0,0)');
+        ctx.fillStyle = gradient;
+        ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+        ctx.fill();
+    }
+}
+
+function initBlobs() {
+    blobs.length = 0;
+    for (let i = 0; i < numBlobs; i++) {
+        const x = Math.random() * canvas.width;
+        const y = Math.random() * canvas.height;
+        const radius = Math.random() * 100 + 50;
+        const color = `hsla(${Math.random() * 360}, 100%, 70%, 0.8)`;
+        blobs.push(new Blob(x, y, radius, color));
+    }
+}
+
+function animate() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = 'rgba(10, 10, 20, 0.2)';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    blobs.forEach(blob => {
+        blob.update();
+        blob.draw();
+    });
+    
+    requestAnimationFrame(animate);
+}
+
+initBlobs();
+animate();
+        // Draw lines between nearby shapes
+        function drawConnections() {
+            for (let i = 0; i < shapes.length; i++) {
+                for (let j = i + 1; j < shapes.length; j++) {
+                    const dx = shapes[i].x - shapes[j].x;
+                    const dy = shapes[i].y - shapes[j].y;
+                    const distance = Math.sqrt(dx * dx + dy * dy);
+                    
+                    if (distance < 150) {
+                        ctx.beginPath();
+                        ctx.moveTo(shapes[i].x, shapes[i].y);
+                        ctx.lineTo(shapes[j].x, shapes[j].y);
+                        
+                        const opacity = 1 - distance / 150;
+                        ctx.strokeStyle = `rgba(110, 68, 255, ${opacity * 0.2})`;
+                        ctx.lineWidth = 1;
+                        ctx.stroke();
+                    }
+                }
+            }
+        }
+        
+        // Start the animation
+        animate();
+    </script>
+</body>
+</html>

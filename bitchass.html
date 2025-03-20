@@ -1,0 +1,911 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quantum | AETHER Premium Perfumes</title>
+    <style>
+        :root {
+            --primary: #121212;
+            --secondary: #f8f8f8;
+            --accent: #6e44ff;
+            --accent-light: #8e6aff;
+            --text: #e0e0e0;
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--primary);
+            color: var(--text);
+            overflow-x: hidden;
+        }
+
+        button {
+            cursor: pointer;
+            border: none;
+            outline: none;
+        }
+
+        /* Interactive Background */
+        #background-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            opacity: 0.4;
+        }
+
+        /* Navbar */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 1.5rem 5%;
+            position: fixed;
+            top: 0;
+            width: 100%;
+            z-index: 100;
+            background-color: rgba(18, 18, 18, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--secondary);
+        }
+
+        .logo span {
+            color: var(--accent);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+        }
+
+        .nav-links a {
+            color: var(--text);
+            text-decoration: none;
+            font-size: 1rem;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+
+        .nav-links a:hover {
+            color: var(--accent);
+        }
+
+        .cart-btn {
+            background: transparent;
+            color: var(--text);
+            font-size: 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: var(--transition);
+        }
+
+        .cart-btn:hover {
+            color: var(--accent);
+        }
+
+        /* Breadcrumb */
+        .breadcrumb {
+            padding: 7rem 5% 2rem;
+            font-size: 0.9rem;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+
+        .breadcrumb a {
+            color: var(--text);
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .breadcrumb a:hover {
+            color: var(--accent);
+        }
+
+        .breadcrumb span {
+            margin: 0 0.5rem;
+        }
+
+        /* Product Detail */
+        .product-detail {
+            display: flex;
+            padding: 0 5% 5rem;
+            gap: 4rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .product-gallery {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .main-image {
+            height: 500px;
+            background: linear-gradient(45deg, rgba(110, 68, 255, 0.05), rgba(110, 68, 255, 0.1));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .image-selector {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .thumbnail {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(45deg, rgba(110, 68, 255, 0.05), rgba(110, 68, 255, 0.1));
+            border-radius: 5px;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .thumbnail:hover {
+            border-color: var(--accent);
+        }
+
+        .thumbnail.active {
+            border-color: var(--accent);
+            box-shadow: 0 0 10px rgba(110, 68, 255, 0.5);
+        }
+
+        .product-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .product-name {
+            font-size: 3rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-subtitle {
+            font-size: 1.2rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+        }
+
+        .product-price {
+            font-size: 2rem;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
+
+        .product-rating {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .stars {
+            color: var(--accent);
+            letter-spacing: 2px;
+        }
+
+        .review-count {
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        .product-description {
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 1.5rem;
+        }
+
+        .product-feature {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .feature-icon {
+            width: 24px;
+            height: 24px;
+            color: var(--accent);
+        }
+
+        .notes-section {
+            margin: 1.5rem 0;
+        }
+
+        .notes-title {
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+        }
+
+        .notes-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+        }
+
+        .note-box {
+            background: rgba(255, 255, 255, 0.03);
+            padding: 1rem;
+            border-radius: 8px;
+            text-align: center;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: var(--transition);
+        }
+
+        .note-box:hover {
+            border-color: var(--accent);
+            transform: translateY(-5px);
+        }
+
+        .note-type {
+            font-size: 0.8rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            opacity: 0.7;
+            margin-bottom: 0.5rem;
+        }
+
+        .note-name {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 5px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .quantity-btn:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .quantity-input {
+            width: 60px;
+            height: 40px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 0 0.5rem;
+            text-align: center;
+            font-size: 1rem;
+            color: var(--text);
+            border-radius: 5px;
+        }
+
+        .size-selector {
+            margin: 1.5rem 0;
+        }
+
+        .size-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 0.5rem;
+        }
+
+        .size-option {
+            padding: 0.5rem 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .size-option:hover {
+            border-color: var(--accent);
+        }
+
+        .size-option.active {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .add-to-cart {
+            flex: 2;
+            background: var(--accent);
+            color: white;
+            padding: 1rem;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: 600;
+            letter-spacing: 1px;
+            transition: var(--transition);
+        }
+
+        .add-to-cart:hover {
+            background: var(--accent-light);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(110, 68, 255, 0.3);
+        }
+
+        .wishlist-btn {
+            flex: 1;
+            background: transparent;
+            color: var(--text);
+            padding: 1rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .wishlist-btn:hover {
+            border-color: var(--accent);
+            color: var(--accent);
+        }
+
+        /* Tabs Section */
+        .tabs-section {
+            padding: 3rem 5%;
+            position: relative;
+            z-index: 1;
+            background-color: rgba(18, 18, 18, 0.7);
+            backdrop-filter: blur(10px);
+        }
+
+        .tabs-header {
+            display: flex;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .tab-btn {
+            padding: 1rem 2rem;
+            background: transparent;
+            color: var(--text);
+            font-size: 1rem;
+            opacity: 0.7;
+            position: relative;
+            transition: var(--transition);
+        }
+
+        .tab-btn.active {
+            opacity: 1;
+        }
+
+        .tab-btn.active::after {
+            content: "";
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--accent);
+        }
+
+        .tab-content {
+            display: none;
+            line-height: 1.6;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* Related Products */
+        .related-products {
+            padding: 5rem 5%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+            position: relative;
+            display: inline-block;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .section-title::after {
+            content: "";
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 60%;
+            height: 3px;
+            background: var(--accent);
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-top: 3rem;
+        }
+
+        .product-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: var(--transition);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .product-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+            border-color: rgba(110, 68, 255, 0.2);
+        }
+
+        .product-img {
+            height: 250px;
+            background: linear-gradient(45deg, rgba(110, 68, 255, 0.05), rgba(110, 68, 255, 0.1));
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .product-info-card {
+            padding: 1.5rem;
+        }
+
+        .product-name-card {
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .product-desc {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-bottom: 1rem;
+        }
+
+        .product-price-card {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin-bottom: 1rem;
+        }
+
+        .add-to-cart-card {
+            width: 100%;
+            background: transparent;
+            color: var(--text);
+            padding: 0.8rem;
+            border: 1px solid var(--text);
+            border-radius: 5px;
+            font-size: 0.9rem;
+            transition: var(--transition);
+        }
+
+        .add-to-cart-card:hover {
+            background: var(--accent);
+            color: white;
+            border-color: var(--accent);
+        }
+
+        /* Footer */
+        footer {
+            background: rgba(0, 0, 0, 0.5);
+            padding: 3rem 5%;
+            position: relative;
+            z-index: 1;
+            backdrop-filter: blur(10px);
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 2rem;
+        }
+
+        .footer-logo {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .footer-desc {
+            opacity: 0.7;
+            line-height: 1.6;
+        }
+
+        .footer-links h4 {
+            margin-bottom: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .footer-links ul {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 0.8rem;
+        }
+
+        .footer-links a {
+            color: var(--text);
+            text-decoration: none;
+            opacity: 0.7;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--accent);
+            opacity: 1;
+        }
+
+        .footer-newsletter input {
+            background: rgba(255, 255, 255, 0.05);
+            border: none;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 5px;
+            margin-bottom: 1rem;
+            color: var(--text);
+        }
+
+        .footer-newsletter button {
+            background: var(--accent);
+            color: white;
+            padding: 0.8rem;
+            width: 100%;
+            border-radius: 5px;
+            font-weight: 600;
+            transition: var(--transition);
+        }
+
+        .footer-newsletter button:hover {
+            background: var(--accent-light);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 2rem;
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            opacity: 0.7;
+            font-size: 0.9rem;
+        }
+
+        /* Animations */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .product-info, .product-gallery, .product-card {
+            animation: fadeIn 1s ease forwards;
+        }
+
+        .product-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .product-card:nth-child(3) {
+            animation-delay: 0.4s;
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .product-detail {
+                flex-direction: column;
+            }
+            
+            .main-image {
+                height: 400px;
+            }
+            
+            .notes-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+            }
+            
+            .product-name {
+                font-size: 2.5rem;
+            }
+            
+            .notes-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .product-name {
+                font-size: 2rem;
+            }
+            
+            .notes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .size-options {
+                flex-wrap: wrap;
+            }
+            
+            .main-image {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Interactive Background Canvas -->
+    <canvas id="background-canvas"></canvas>
+
+    <!-- Navbar -->
+    <nav>
+        <div class="logo">AETHER<span>.</span></div>
+        <div class="nav-links">
+            <a href= textx.html>Home</a>
+            <a href="#">Collections</a>
+            <a href="#">Best Sellers</a>
+            <a href="#">About</a>
+            <a href="#">Contact</a>
+        </div>
+        <button class="cart-btn">Cart (0)</button>
+    </nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="#">Home</a> <span>/</span> <a href="#">Collections</a> <span>/</span> <a href="#">Flagship</a> <span>/</span> Quantum
+    </div>
+
+    <!-- Product Detail Section -->
+    <section class="product-detail">
+        <!-- Product Gallery -->
+        <div class="product-gallery">
+            <div class="main-image">
+                <img src="/api/placeholder/400/500" alt="Quantum Perfume Main Image" />
+            </div>
+            <div class="image-selector">
+                <div class="thumbnail active">
+                    <img src="/api/placeholder/60/60" alt="Thumbnail 1" />
+                </div>
+                <div class="thumbnail">
+                    <img src="/api/placeholder/60/60" alt="Thumbnail 2" />
+                </div>
+                <div class="thumbnail">
+                    <img src="/api/placeholder/60/60" alt="Thumbnail 3" />
+                </div>
+                <div class="thumbnail">
+                    <img src="/api/placeholder/60/60" alt="Thumbnail 4" />
+                </div>
+            </div>
+        </div>
+
+        <!-- Product Info -->
+        <div class="product-info">
+            <div>
+                <h1 class="product-name">Quantum</h1>
+                <p class="product-subtitle">Our flagship fragrance with molecular precision</p>
+                <div class="product-price">$120.00</div>
+
+                <div class="product-rating">
+                    <div class="stars">★★★★★</div>
+                    <span class="review-count">(124 reviews)</span>
+                </div>
+
+                <p class="product-description">
+                    Experience our revolutionary flagship fragrance "Quantum" - a masterpiece of modern perfumery that combines molecular precision with artistic expression. This premium scent creates a unique olfactory journey that evolves throughout the day, revealing new dimensions as time passes.
+                </p>
+
+                <div class="product-feature">
+                    <div class="feature-icon">✓</div>
+                    <div>Premium quality ingredients from sustainable sources</div>
+                </div>
+                <div class="product-feature">
+                    <div class="feature-icon">✓</div>
+                    <div>Long-lasting formula (12+ hours)</div>
+                </div>
+                <div class="product-feature">
+                    <div class="feature-icon">✓</div>
+                    <div>Cruelty-free and vegan</div>
+                </div>
+                <div class="product-feature">
+                    <div class="feature-icon">✓</div>
+                    <div>Free from parabens and synthetic colorants</div>
+                </div>
+            </div>
+
+            <div class="notes-section">
+                <h3 class="notes-title">Fragrance Notes</h3>
+                <div class="notes-grid">
+                    <div class="note-box">
+                        <div class="note-type">Top Notes</div>
+                        <div class="note-name">Bergamot & Cardamom</div>
+                    </div>
+                    <div class="note-box">
+                        <div class="note-type">Middle Notes</div>
+                        <div class="note-name">Amber & Jasmine</div>
+                    </div>
+                    <div class="note-box">
+                        <div class="note-type">Base Notes</div>
+                        <div class="note-name">Cedar Wood & Musk</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="size-selector">
+                <h3>Size</h3>
+                <div class="size-options">
+                    <div class="size-option">30ml</div>
+                    <div class="size-option active">50ml</div>
+                    <div class="size-option">100ml</div>
+                </div>
+            </div>
+
+            <div class="quantity-selector">
+                <button class="quantity-btn">-</button>
+                <input type="number" class="quantity-input" value="1" min="1" max="10">
+                <button class="quantity-btn">+</button>
+            </div>
+
+            <div class="action-buttons">
+                <button class="add-to-cart">Add to Cart</button>
+                <button class="wishlist-btn">Add to Wishlist</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Tabs Section -->
+    <section class="tabs-section">
+        <div class="tabs-header">
+            <button class="tab-btn active" data-tab="description">Description</button>
+            <button class="tab-btn" data-tab="ingredients">Ingredients</button>
+            <button class="tab-btn" data-tab="reviews">Reviews</button>
+            <button class="tab-btn" data-tab="shipping">Shipping & Returns</button>
+        </div>
+
+        <div id="description" class="tab-content active">
+            <p>Quantum is the culmination of years of research and artistic exploration in the world of perfumery. Our flagship fragrance merges cutting-edge molecular science with traditional perfume craftsmanship to create a scent that's both innovative and timeless.</p>
+            <br>
+            <p>The experience begins with sparkling bergamot and warm cardamom, creating an energetic and inviting opening. As the fragrance evolves, the heart reveals a sophisticated blend of amber and jasmine that balances warmth with delicate floral notes. The base of cedar wood and musk provides a grounding, long-lasting foundation that leaves a memorable impression.</p>
+            <br>
+            <p>Quantum is designed to adapt to the wearer's unique chemistry, creating a slightly different experience for each individual. This revolutionary approach to perfume design ensures that the fragrance becomes distinctly yours, evolving throughout the day to reveal new dimensions and aspects.</p>
+        </div>
+
+        <div id="ingredients" class="tab-content">
+            <p>Quantum is crafted with the finest ingredients, prioritizing both quality and sustainability. All our fragrance components are ethically sourced and cruelty-free.</p>
+            <br>
+            <p><strong>Key Components:</strong></p>
+            <ul style="list-style-type: none; margin-top: 1rem; line-height: 1.8;">
+                <li>• Alcohol Denat.</li>
+                <li>• Parfum (Fragrance)</li>
+                <li>• Aqua (Water)</li>
+                <li>• Bergamot Oil</li>
+                <li>• Cardamom Extract</li>
+                <li>• Amber Accord</li>
+                <li>• Jasmine Absolute</li>
+                <li>• Cedar Wood Oil</li>
+                <li>• Musk Accord</li>
+                <li>• Limonene*</li>
+                <li>• Linalool*</li>
+                <li>• Citral*</li>
+            </ul>
+            <p style="margin-top: 1rem; font-size: 0.9rem; opacity: 0.7;">*Naturally occurring in essential oils</p>
+        </div>
+
+        <div id="reviews" class="tab-content">
+            <div style="margin-bottom: 2rem;">
+                <h3 style="margin-bottom: 1rem;">Customer Reviews</h3>
+                <div style="display: flex; align-items: center; margin-bottom: 1rem;">
+                    <div style="font-size: 2rem; margin-right: 1rem;">4.9</div>
+                    <div>
+                        <div class="stars">★★★★★</div>
+                        <div style="font-size: 0.9rem; opacity: 0.7;">Based on 124 reviews</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sample Reviews -->
+            <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div style="font-weight: 600;">Emma L.</div>
+                    <div style="opacity: 0.7; font-size: 0.9rem;">2 weeks ago</div>
+                </div>
+                <div class="stars" style="margin-bottom: 0.5rem; font-size: 0.9rem;">★★★★★</div>
+                <p>Absolutely love this fragrance! It evolves throughout the day in the most beautiful way. I've received so many compliments when wearing it. Definitely worth the price for the quality and longevity.</p>
+            </div>
+
+            <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); padding-bottom: 1.5rem; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div style="font-weight: 600;">Michael T.</div>
+                    <div style="opacity: 0.7; font-size: 0.9rem;">1 month ago</div>
+                </div>
+                <div class="stars" style="margin-bottom: 0.5rem; font-size: 0.9rem;">★★★★★</div>
+                <p>As someone who's picky about fragrances, I was skeptical at first. But Quantum has become my signature scent. The cedar and musk base notes are particularly impressive, and I love how it subtly changes throughout wear.</p>
+            </div>
+
+            <div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 0.5rem;">
+                    <div style="font-weight: 600;">Sophia R.</div>
+                    <div style="opacity: 0.7; font-size: 0.9rem;">6 weeks ago</div>
+                </div>
+                <div class="stars" style="margin-bottom: 0.5rem; font-size: 0.9rem;">★★★★☆</div>
+                <p>Beautiful scent with impressive staying power. The only reason for 4 stars instead of 5 is that I find the opening a bit strong, though it settles into something magical after about 30 minutes. The bottle design is also stunning!</p>
+            </div>
+        </div>
+
+        <div id="shipping" class="tab-content">
+            <h3 style="margin-bottom: 1rem;">Shipping Information</h3>
+            <p>We ship worldwide using premium couriers to ensure your fragrance arrives in perfect condition.</p>
+            <ul style="list-style-type: none; margin: 1rem 0; line-height: 1.8;">
+                <li>• Domestic (US): 2-3 business days</li>
+                <li>• International: 5-10 business days</li>
+                <li>• Free shipping on orders over $75</li>
+                <li>• Signature required on delivery</li>
+            </ul>
+            
+            <h3 style="margin: 1.5rem 0 1rem;">Return Policy</h3>
+            <p>We want you to be completely satisfied with your AETHER experience:</p>
+            <ul style="list-style-type: none; margin: 1rem 0; line-height: 1.8;">
+                <li>• 30-day return window for unused and unopened products</li>
+                <li>• Return shipping is free for domestic orders</li>
+                <li>• Exchanges are processed within 5 business days</li>
+                <li>• Please contact our customer service team to initiate a return</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- Related Products Section -->
+    <section class="related-products">
+        <h2
